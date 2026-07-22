@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # SentinelAI
 
 ## AI-Powered Industrial Safety Intelligence & Digital Twin Platform
@@ -32,3 +33,6 @@ SentinelAI is an enterprise-grade industrial safety platform that combines:
 - Docker
 - Claude AI
 - Three.js
+=======
+# My-first-project
+>>>>>>> 6709ca624af2301450d0064202b3eec0c658e05d
