@@ -1,0 +1,1 @@
+from .sensor_router import router as sensor_router

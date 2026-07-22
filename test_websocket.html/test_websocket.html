@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SentinelAI Live Monitor</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background:#1e1e1e;
+            color:white;
+            padding:30px;
+        }
+
+        h1{
+            color:#00ff99;
+        }
+
+        pre{
+            background:#2b2b2b;
+            padding:20px;
+            border-radius:10px;
+            overflow:auto;
+            font-size:15px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h1>🚀 SentinelAI Live Sensor Data</h1>
+
+<pre id="output">
+Waiting for server...
+</pre>
+
+<script>
+
+const output=document.getElementById("output");
+
+const socket=new WebSocket(
+"ws://127.0.0.1:8000/ws/sensors"
+);
+
+socket.onopen=function(){
+
+console.log("Connected");
+
+}
+
+socket.onmessage=function(event){
+
+const data=JSON.parse(event.data);
+
+output.textContent=JSON.stringify(
+data,
+null,
+4
+);
+
+}
+
+socket.onerror=function(error){
+
+output.textContent="Connection Error";
+
+}
+
+socket.onclose=function(){
+
+output.textContent="Disconnected";
+
+}
+
+</script>
+
+</body>
+
+</html>
