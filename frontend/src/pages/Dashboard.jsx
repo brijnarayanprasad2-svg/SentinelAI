@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import api from "../api/api";
 
 import MainLayout from "../layouts/MainLayout";
@@ -9,89 +8,63 @@ import StatCard from "../components/StatCard";
 import SensorChart from "../components/SensorChart";
 import AIDecisionPanel from "../components/AIDecisionPanel";
 import AlertCard from "../components/AlertCard";
+
 export default function Dashboard() {
 
     const [sensors, setSensors] = useState([]);
     const [decision, setDecision] = useState(null);
 
-    // ==========================================
-    // Load Sensors
-    // ==========================================
-
     async function loadSensors() {
 
         try {
 
-           const res = await api.get("/api/sensors/latest");
+            const res = await api.get("/api/sensors/latest");
 
-if (res.data.success) {
+            console.log("API Response:", res.data);
 
-    setSensors(res.data.sensors || []);
-
-    setDecision(res.data.decision || null);
-
-}
+            if (res.data.success) {
+                setSensors(res.data.sensors || []);
+                setDecision(res.data.decision || null);
+            }
 
         } catch (err) {
 
-            console.error("Dashboard Error:", err);
+            console.error(err);
 
         }
 
     }
 
-    // ==========================================
-    // Auto Refresh
-    // ==========================================
-
     useEffect(() => {
 
         loadSensors();
 
-        const interval = setInterval(() => {
-
-            loadSensors();
-
-        }, 2000);
+        const interval = setInterval(loadSensors, 2000);
 
         return () => clearInterval(interval);
 
     }, []);
 
-    // ==========================================
-    // Statistics
-    // ==========================================
-
     const criticalSensors = sensors.filter(
-        (sensor) => sensor.status === "Critical"
+        sensor => sensor.status === "Critical"
     ).length;
 
     const warningSensors = sensors.filter(
-        (sensor) => sensor.status === "Warning"
+        sensor => sensor.status === "Warning"
     ).length;
 
     const plantStatus =
         criticalSensors > 0 ? "ALERT" : "SAFE";
 
-    // ==========================================
-    // UI
-    // ==========================================
-
     return (
 
         <MainLayout>
 
-            {/* Heading */}
-
             <h1 className="text-4xl font-bold text-white mb-8">
-
                 Industrial Monitoring Dashboard
-
             </h1>
 
-            {/* Statistics */}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
 
                 <StatCard
                     title="Total Sensors"
@@ -117,21 +90,15 @@ if (res.data.success) {
                 <StatCard
                     title="Plant Status"
                     value={plantStatus}
-                    color={
-                        plantStatus === "SAFE"
-                            ? "green"
-                            : "red"
-                    }
+                    color={plantStatus === "SAFE" ? "green" : "red"}
                     type="plant"
                 />
 
             </div>
 
-            {/* Sensor Cards */}
-
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-                {sensors.map((sensor) => (
+                {sensors.map(sensor => (
 
                     <SensorCard
                         key={sensor.id}
@@ -146,24 +113,17 @@ if (res.data.success) {
 
             </div>
 
-            {/* Live Chart */}
-
             <div className="mt-10">
-
                 <SensorChart sensors={sensors} />
-
             </div>
 
-            {/* AI Decision Panel */}
-
             <div className="mt-10">
-
-                <AIDecisionPanel sensors={sensors} />
-
+                <AIDecisionPanel decision={decision} />
             </div>
+
             <div className="mt-10">
-    <AlertCard sensors={sensors} />
-</div>
+                <AlertCard sensors={sensors} />
+            </div>
 
         </MainLayout>
 
